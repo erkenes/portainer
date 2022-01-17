@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.11.0
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ROOT_PATH}/portainer_data:/data
+    restart: always
+    networks:
+      - "portainer"
+
+  nginx:
+    build: './Docker/nginx'
+    links:
+      - "portainer"
+    environment:
+      NGINX_PORT: "${NGINX_PORT}"
+      VIRTUAL_HOST: "${VIRTUAL_HOST}"
+    command: /bin/sh -c "/run_nginx.sh"
+    restart: always
+    networks:
+      - "portainer"
+      - "nginx-proxy"
+
+
+networks:
+  nginx-proxy:
+    external: true
+    name: "nginx-proxy"
+  portainer:
+    driver: bridge

@@ -1,0 +1,3 @@
+.idea/
+portainer_data/
+!portainer_data/.gitkeep
